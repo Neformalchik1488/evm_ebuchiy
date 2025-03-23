@@ -32,8 +32,6 @@ kbd_input:
     cmpb $'0', c    # код меньше кода символа '0' ?
     jb print_err_msg    # ДА - на вывод сообщения об ошибке
 
-    Puts "efwewewfuiui hi wfeuiwefhi wefhie hifhw efhwih i fwehiwefhfwehefwhfewhefwhfewh fewu few few few uifwe ufwe uifweufw nfiwn iefwniefnwfnwe fnwf nwn fn fwn fwn ufweni fwn fnw fnuwf niwfn uwnf uwnu fwn fwni fwn fnw fnwf nowenf uwen fwenf nwf nwfnwn fiwn f nf nuwenegrfnuwe fnuewf nuwe nfuw nfw nefwn efwnfnwef w fnw fw "
-
     cmpl $5, %esi
     je stopbuf
 
