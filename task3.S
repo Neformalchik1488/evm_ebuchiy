@@ -1,0 +1,74 @@
+/*
+ * Программа ввода кодов цифровых символов в буфер в ОП
+ */
+
+.include "my-macro"
+
+.bss
+    .lcomm buf, 100 # 100 байтовый буфер для кодов прочитанных символов
+    .lcomm c, 1    # однобайтовый буфер для чтения байта из файла stdin
+
+.text
+.global _start
+
+_start:
+    sub    %esi, %esi     # указатель адреса байта в буфере buf (индексный регистр)
+
+show_prompt:
+    Puts "Вводите цифру, друг мой!"     # макровызов вывода строки в
+                    # файл stdout (подсказка ввода)
+
+kbd_input:
+    Getchar $c          # макровызов ввода байта из stdin в
+            # промежуточный буфер c
+
+    cmpl $0, %eax     # наступило событие EOF (конец файла stdin) ?
+    je stop        # Да - на завершение программы
+
+    cmpb $'\n', c     # это символ перевода строки ?
+    je lastnum     # ДА - на ввод следующего символа
+    cmpb $'9', c      # код больше кода символа '9' ?
+    ja print_err_msg    # ДА - на вывод сообщения об ошибке
+    cmpb $'0', c    # код меньше кода символа '0' ?
+    jb print_err_msg    # ДА - на вывод сообщения об ошибке
+
+    Puts "efwewewfuiui hi wfeuiwefhi wefhie hifhw efhwih i fwehiwefhfwehefwhfewhefwhfewh fewu few few few uifwe ufwe uifweufw nfiwn iefwniefnwfnwe fnwf nwn fn fwn fwn ufweni fwn fnw fnuwf niwfn uwnf uwnu fwn fwni fwn fnw fnwf nowenf uwen fwenf nwf nwfnwn fiwn f nf nuwenegrfnuwe fnuewf nuwe nfuw nfw nefwn efwnfnwef w fnw fw "
+
+    cmpl $5, %esi
+    je stopbuf
+
+    movb c, %al         # передать код символа цифры из c в al
+    movb %al, buf(%esi) # передать код символа цифры из al в байт
+            # буфера по адресу &buf + esi
+    incl %esi        # указать на следующий байт буфера для
+            # следующего кода
+
+    Puts "Цифра! Хорошо." # сообщения об успехе вводе
+
+    jmp show_prompt    # на ввод следующего символа
+
+print_err_msg:
+    Puts "Не цифровая клавиша. Повторите ввод"    # вывод сообщения об ошибке
+    jmp show_prompt     # на ввод следующего символа
+
+lastnum:
+    cmpl $0, %esi
+    je empty_buf
+    xor %eax, %eax
+    decl %esi
+    movb buf(%esi), %al
+    subl $48, %eax
+    incl %esi
+    jmp kbd_input
+
+empty_buf:
+    Puts "Цифра ещё не введена"
+    jmp show_prompt
+
+stopbuf:
+    Puts "Место в буфере закончилось. Программа завершена" # выводим сообщение о конце буфера и завершении программы
+
+stop:
+    Exit $0
+
+.end
